@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -17,6 +17,19 @@
             text-align: center;
             margin-bottom: 30px;
         }
+        .section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -24,6 +37,7 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #555;
         }
         input {
             width: 100%;
@@ -33,7 +47,7 @@
             box-sizing: border-box;
         }
         button {
-            background-color: #4CAF50;
+            background-color: #3498db;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -42,16 +56,17 @@
             font-size: 16px;
             width: 100%;
             margin-top: 10px;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
         }
         .result {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 20px;
-            background-color: #fff;
+            background-color: #e8f4fc;
             border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
         }
         .grade-table {
             width: 100%;
@@ -70,82 +85,169 @@
             font-size: 24px;
             font-weight: bold;
             margin: 20px 0;
+            color: #2c3e50;
         }
         .grade-label {
             font-size: 18px;
             margin-bottom: 10px;
+            color: #555;
+        }
+        .prediction-result {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .prediction-box {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 0 10px;
+        }
+        .prediction-box.grade-a {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .prediction-box.grade-b {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+        .prediction-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .prediction-score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .impossible {
+            color: #e74c3c;
+            font-style: italic;
+        }
+        .already-achieved {
+            color: #27ae60;
+            font-style: italic;
+        }
+        .note {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <h1>Trình Tính Tổng Điểm Học Phần</h1>
     
-    <div class="form-group">
-        <label for="kttx">Kiểm tra Thường Xuyên (25%):</label>
-        <input type="number" id="kttx" min="0" max="10" step="0.01" placeholder="Nhập điểm Kiểm tra Thường Xuyên">
-    </div>
-    
-    <div class="form-group">
-        <label for="cn">Chuyên cần (10%):</label>
-        <input type="number" id="cn" min="0" max="10" step="0.01" placeholder="Nhập điểm Chuyên cần">
-    </div>
-    
-    <div class="form-group">
-        <label for="ghp">Giữa Học Phần (15%):</label>
-        <input type="number" id="ghp" min="0" max="10" step="0.01" placeholder="Nhập điểm Giữa Học Phần">
-    </div>
-    
-    <div class="form-group">
-        <label for="tck">Thi Cuối Kỳ (50%):</label>
-        <input type="number" id="tck" min="0" max="10" step="0.01" placeholder="Nhập điểm Thi Cuối Kỳ">
-    </div>
-    
-    <button onclick="calculateGrade()">Tính Tổng Điểm</button>
-    
-    <div id="result" class="result" style="display: none;">
-        <div class="grade-label">Kết quả:</div>
-        <div class="final-grade" id="total-score"></div>
-        <div class="grade-label" id="final-grade"></div>
+    <!-- Phần tính tổng điểm -->
+    <div class="section">
+        <h2>Tính Tổng Điểm Học Phần</h2>
         
-        <h3>Bảng Đổi Điểm:</h3>
-        <table class="grade-table">
-            <tr>
-                <th>Điểm</th>
-                <th>qd_th4</th>
-                <th>qd_chir</th>
-                <th>Xếp loại</th>
-            </tr>
-            <tr>
-                <td>0.00 - 3.94</td>
-                <td>0.00</td>
-                <td>F</td>
-                <td>Kém</td>
-            </tr>
-            <tr>
-                <td>3.95 - 5.44</td>
-                <td>1.00</td>
-                <td>D</td>
-                <td>Trung bình yếu</td>
-            </tr>
-            <tr>
-                <td>4.45 - 6.94</td>
-                <td>2.00</td>
-                <td>C</td>
-                <td>Trung bình</td>
-            </tr>
-            <tr>
-                <td>6.95 - 8.44</td>
-                <td>3.00</td>
-                <td>B</td>
-                <td>Khá</td>
-            </tr>
-            <tr>
-                <td>8.45 - 10.00</td>
-                <td>4.00</td>
-                <td>A</td>
-                <td>Giỏi</td>
-            </tr>
-        </table>
+        <div class="form-group">
+            <label for="kttx">Kiểm tra Thường Xuyên (25%):</label>
+            <input type="number" id="kttx" min="0" max="10" step="0.01" placeholder="Nhập điểm Kiểm tra Thường Xuyên">
+        </div>
+        
+        <div class="form-group">
+            <label for="cn">Chuyên cần (10%):</label>
+            <input type="number" id="cn" min="0" max="10" step="0.01" placeholder="Nhập điểm Chuyên cần">
+        </div>
+        
+        <div class="form-group">
+            <label for="ghp">Giữa Học Phần (15%):</label>
+            <input type="number" id="ghp" min="0" max="10" step="0.01" placeholder="Nhập điểm Giữa Học Phần">
+        </div>
+        
+        <div class="form-group">
+            <label for="tck">Thi Cuối Kỳ (50%):</label>
+            <input type="number" id="tck" min="0" max="10" step="0.01" placeholder="Nhập điểm Thi Cuối Kỳ">
+        </div>
+        
+        <button onclick="calculateGrade()">Tính Tổng Điểm</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <div class="grade-label">Kết quả:</div>
+            <div class="final-grade" id="total-score"></div>
+            <div class="grade-label" id="final-grade"></div>
+            
+            <h3>Bảng Đổi Điểm:</h3>
+            <table class="grade-table">
+                <tr>
+                    <th>Điểm</th>
+                    <th>qd_th4</th>
+                    <th>qd_chir</th>
+                    <th>Xếp loại</th>
+                </tr>
+                <tr>
+                    <td>0.00 - 3.94</td>
+                    <td>0.00</td>
+                    <td>F</td>
+                    <td>Kém</td>
+                </tr>
+                <tr>
+                    <td>3.95 - 5.44</td>
+                    <td>1.00</td>
+                    <td>D</td>
+                    <td>Trung bình yếu</td>
+                </tr>
+                <tr>
+                    <td>4.45 - 6.94</td>
+                    <td>2.00</td>
+                    <td>C</td>
+                    <td>Trung bình</td>
+                </tr>
+                <tr>
+                    <td>6.95 - 8.44</td>
+                    <td>3.00</td>
+                    <td>B</td>
+                    <td>Khá</td>
+                </tr>
+                <tr>
+                    <td>8.45 - 10.00</td>
+                    <td>4.00</td>
+                    <td>A</td>
+                    <td>Giỏi</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Phần dự đoán điểm -->
+    <div class="section">
+        <h2>Dự Đoán Điểm Cuối Kỳ</h2>
+        <p class="note">Nhập điểm của 3 thành phần đã có để biết cần bao nhiêu điểm cuối kỳ để đạt A hoặc B</p>
+        
+        <div class="form-group">
+            <label for="pred-kttx">Kiểm tra Thường Xuyên (25%):</label>
+            <input type="number" id="pred-kttx" min="0" max="10" step="0.01" placeholder="Nhập điểm Kiểm tra Thường Xuyên">
+        </div>
+        
+        <div class="form-group">
+            <label for="pred-cn">Chuyên cần (10%):</label>
+            <input type="number" id="pred-cn" min="0" max="10" step="0.01" placeholder="Nhập điểm Chuyên cần">
+        </div>
+        
+        <div class="form-group">
+            <label for="pred-ghp">Giữa Học Phần (15%):</label>
+            <input type="number" id="pred-ghp" min="0" max="10" step="0.01" placeholder="Nhập điểm Giữa Học Phần">
+        </div>
+        
+        <button onclick="predictGrade()">Dự đoán điểm cuối kỳ</button>
+        
+        <div id="prediction-result" class="result" style="display: none;">
+            <div class="prediction-result">
+                <div class="prediction-box grade-a">
+                    <div class="prediction-title">Để đạt A (Giỏi)</div>
+                    <div class="prediction-score" id="prediction-a"></div>
+                </div>
+                <div class="prediction-box grade-b">
+                    <div class="prediction-title">Để đạt B (Khá)</div>
+                    <div class="prediction-score" id="prediction-b"></div>
+                </div>
+            </div>
+            <div class="note">Điểm cuối kỳ cần thiết (tối đa 10 điểm)</div>
+        </div>
     </div>
 
     <script>
@@ -177,6 +279,50 @@
             document.getElementById('total-score').textContent = totalScore.toFixed(2);
             document.getElementById('final-grade').textContent = 'Xếp loại: ' + finalGrade;
             document.getElementById('result').style.display = 'block';
+        }
+        
+        function predictGrade() {
+            // Lấy giá trị từ các ô nhập liệu
+            const kttx = parseFloat(document.getElementById('pred-kttx').value) || 0;
+            const cn = parseFloat(document.getElementById('pred-cn').value) || 0;
+            const ghp = parseFloat(document.getElementById('pred-ghp').value) || 0;
+            
+            // Tính điểm cần thiết cho từng loại
+            // Công thức: Điểm TCK = (Tổng điểm - (Điểm KT * 0.25) - (Điểm CN * 0.10) - (Điểm GHP * 0.15)) / 0.50
+            
+            // Điểm cần để đạt A (8.45)
+            const scoreForA = (8.45 - (kttx * 0.25) - (cn * 0.10) - (ghp * 0.15)) / 0.50;
+            
+            // Điểm cần để đạt B (6.95)
+            const scoreForB = (6.95 - (kttx * 0.25) - (cn * 0.10) - (ghp * 0.15)) / 0.50;
+            
+            // Hiển thị kết quả
+            const predictionAResult = document.getElementById('prediction-a');
+            const predictionBResult = document.getElementById('prediction-b');
+            
+            if (scoreForA <= 0) {
+                predictionAResult.textContent = 'Đã đạt!';
+                predictionAResult.className = 'prediction-score already-achieved';
+            } else if (scoreForA > 10) {
+                predictionAResult.textContent = 'Không thể đạt (cần >10)';
+                predictionAResult.className = 'prediction-score impossible';
+            } else {
+                predictionAResult.textContent = scoreForA.toFixed(2);
+                predictionAResult.className = 'prediction-score';
+            }
+            
+            if (scoreForB <= 0) {
+                predictionBResult.textContent = 'Đã đạt!';
+                predictionBResult.className = 'prediction-score already-achieved';
+            } else if (scoreForB > 10) {
+                predictionBResult.textContent = 'Không thể đạt (cần >10)';
+                predictionBResult.className = 'prediction-score impossible';
+            } else {
+                predictionBResult.textContent = scoreForB.toFixed(2);
+                predictionBResult.className = 'prediction-score';
+            }
+            
+            document.getElementById('prediction-result').style.display = 'block';
         }
     </script>
 </body>
